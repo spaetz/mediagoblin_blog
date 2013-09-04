@@ -14,18 +14,12 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#}
 
-{% block profile_content -%}
-  {% template_hook("user_profile") %}
-  {% if user.bio %}
-    {% autoescape False %}
-      {{ user.bio_html }}
-    {% endautoescape %}
-  {% endif %}
-  {% if user.url %}
-    <p>
-      <a href="{{ user.url }}">{{ user.url }}</a>
-    </p>
-  {% endif %}
-{% endblock %}
+#This injects the URL to a user's blog on her profile.
+#}{%if blog %}
+<h2>Blog</h2>
+<p>The user's blog <i>{{blog.title}}</i> can be found here: {{ blog }}</p>
+{%endif%}
+
+  
+

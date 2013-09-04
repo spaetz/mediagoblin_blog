@@ -70,6 +70,11 @@ def setup_plugin():
             
     pluginapi.register_routes(routes)
     pluginapi.register_template_path(os.path.join(PLUGIN_DIR, 'templates'))
+
+    # Register the links to a user's blog
+    pluginapi.register_template_hooks({
+            "user_profile": "mediagoblin/blog/url_to_blog.html"
+            })
     
     
 class BlogPostMediaManager(MediaManagerBase):
@@ -83,12 +88,25 @@ class BlogPostMediaManager(MediaManagerBase):
         return blog
         
 def get_media_type_and_manager():
+
         return MEDIA_TYPE, BlogPostMediaManager
+
+def add_to_user_home_context(context):
+    blog = context['request'].db.Blog.query.filter_by(author=context['user'].id).first()
+    if blog:
+        context['blog'] = blog
+    else:
+        context['blog'] = None
+    return context
 
 hooks = {
     'setup': setup_plugin,
     'get_media_type_and_manager': get_media_type_and_manager,
     ('media_manager', MEDIA_TYPE): lambda: BlogPostMediaManager,
+    # Inject blog context on user profile page
+    ("mediagoblin.user_pages.user_home",
+     "mediagoblin/user_pages/user.html"): add_to_user_home_context
+
 }
 
 
